@@ -1,0 +1,3 @@
+import { CheckCircle2, PackageCheck } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+export function OrderConfirmationPage() { const { id } = useParams(); return <main className="simple-page section-shell confirmation-page"><div className="confirmation-icon"><CheckCircle2 size={34}/></div><p className="eyebrow">That's a good choice</p><h1>Order received.</h1><p>Your order has been created in the demo environment. No real payment was taken.</p><div className="confirmation-ref"><PackageCheck size={18}/><span>Order reference</span><strong>{id?.slice(0,8).toUpperCase()}</strong></div><Link to="/" className="button button-dark">Back to the collection</Link></main>; }

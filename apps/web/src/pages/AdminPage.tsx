@@ -1,0 +1,21 @@
+import { Activity, ArrowRight, Boxes, ClipboardList, DollarSign, PackagePlus, RefreshCw, ShieldAlert } from "lucide-react";
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { api } from "../lib/api";
+import { money } from "../components/ProductCard";
+
+type Summary = { products:number; orders:number; revenueCents:number; lowStock:number };
+type AdminOrder = { id:string; status:string; totalCents:number; createdAt:string; user:{name:string;email:string}; items:{quantity:number;productName:string}[] };
+export function AdminPage() {
+ const [summary,setSummary] = useState<Summary|null>(null); const [orders,setOrders] = useState<AdminOrder[]>([]); const [error,setError] = useState(""); const [,setLoading] = useState(true); const [email,setEmail] = useState("admin@nexora.local"); const [password,setPassword] = useState("ChangeMe123!");
+ async function load() { setLoading(true); setError(""); try { const [s,o] = await Promise.all([api<{data:Summary}>("/admin/summary"),api<{data:AdminOrder[]}>("/admin/orders")]); setSummary(s.data);setOrders(o.data); } catch(e) { setError(e instanceof Error ? e.message : "Unable to load admin data"); } finally { setLoading(false); } }
+ useEffect(()=>{ void load(); },[]);
+ async function login(event:FormEvent) { event.preventDefault(); try { await api("/auth/login",{method:"POST",body:JSON.stringify({email,password})}); await load(); } catch(e) { setError(e instanceof Error ? e.message : "Sign in failed"); } }
+ return <main className="admin-page section-shell"><div className="admin-top"><div><p className="eyebrow">NEXORA / OPERATIONS</p><h1>Good work, <em>in view.</em></h1><p>One place to keep the moving parts moving.</p></div><button className="button button-outline" onClick={()=>void load()}><RefreshCw size={15}/> Refresh data</button></div>
+ {error && <div className="admin-alert"><ShieldAlert size={18}/><div><strong>{error}</strong><p>Sign in with the seeded admin account after running the database seed.</p></div></div>}
+ {!summary && <form className="admin-login" onSubmit={login}><h2>Administrator sign in</h2><label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></label><button className="button button-dark">Sign in to operations <ArrowRight size={16}/></button></form>}
+ {summary && <><div className="admin-metrics"><div className="metric-card"><span>Active products</span><Boxes size={18}/><strong>{summary.products}</strong><small>Currently listed</small></div><div className="metric-card"><span>All orders</span><ClipboardList size={18}/><strong>{summary.orders}</strong><small>Across all statuses</small></div><div className="metric-card"><span>Recognized revenue</span><DollarSign size={18}/><strong>{money(summary.revenueCents)}</strong><small>Paid and fulfilled orders</small></div><div className="metric-card warning"><span>Low stock</span><Activity size={18}/><strong>{summary.lowStock}</strong><small>Five units or fewer</small></div></div><section className="admin-panel"><div className="panel-heading"><div><p className="eyebrow">Recent activity</p><h2>Latest orders</h2></div><span>{orders.length} shown</span></div>{orders.length ? <div className="orders-table-wrap"><table className="orders-table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th><th>Date</th></tr></thead><tbody>{orders.map(o=><tr key={o.id}><td>#{o.id.slice(0,8).toUpperCase()}</td><td>{o.user?.name ?? "Customer"}<small>{o.user?.email}</small></td><td>{o.items.reduce((n,i)=>n+i.quantity,0)}</td><td><span className={`status-pill ${o.status.toLowerCase()}`}>{o.status}</span></td><td>{money(o.totalCents)}</td><td>{new Date(o.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div>:<p className="admin-empty">No orders yet. Place a test order from the storefront to see it here.</p>}</section></>}
+ <div className="admin-footer-note"><PackagePlus size={18}/><p><strong>Product management</strong><br/>Product creation and editing endpoints are available to administrator accounts. <Link to="/">Return to storefront <ArrowRight size={13}/></Link></p></div>
+ </main>;
+}
