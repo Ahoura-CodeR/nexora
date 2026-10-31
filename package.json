@@ -1,0 +1,23 @@
+{
+  "name": "nexora-commerce",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @nexora/shared && concurrently -n api,web -c blue,magenta \"npm run dev -w @nexora/api\" \"npm run dev -w @nexora/web\"",
+    "build": "npm run db:generate -w @nexora/api && npm run build -w @nexora/shared && npm run build -w @nexora/api && npm run build -w @nexora/web",
+    "test": "npm run build -w @nexora/shared && npm run db:generate -w @nexora/api && npm run test -w @nexora/api && npm run test -w @nexora/web",
+    "lint": "npm run build -w @nexora/shared && npm run lint -w @nexora/api && npm run lint -w @nexora/web",
+    "db:generate": "npm run db:generate -w @nexora/api",
+    "db:migrate": "npm run db:migrate -w @nexora/api",
+    "db:seed": "npm run db:seed -w @nexora/api",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2"
+  }
+}
