@@ -33,15 +33,15 @@ adminRouter.post("/products", asyncHandler(async (req, res) => {
 
 adminRouter.patch("/products/:id", asyncHandler(async (req, res) => {
   const input = productInput.partial().parse(req.body);
-  const result = await prisma.product.updateMany({ where: { id: req.params.id }, data: input });
+  const result = await prisma.product.updateMany({ where: { id: String(req.params.id) }, data: input });
   if (!result.count) throw new AppError(404, "Product not found", "PRODUCT_NOT_FOUND");
-  const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+  const product = await prisma.product.findUnique({ where: { id: String(req.params.id) } });
   res.json({ data: product });
 }));
 
 adminRouter.patch("/orders/:id/status", asyncHandler(async (req, res) => {
   const { status } = z.object({ status: z.enum(["PAID", "PROCESSING", "SHIPPED", "CANCELLED"]) }).parse(req.body);
-  const order = await prisma.order.findUnique({ where: { id: req.params.id } });
+  const order = await prisma.order.findUnique({ where: { id: String(req.params.id) } });
   if (!order) throw new AppError(404, "Order not found", "ORDER_NOT_FOUND");
   const allowed: Record<string, string[]> = { PENDING: ["PAID", "CANCELLED"], PAID: ["PROCESSING", "CANCELLED"], PROCESSING: ["SHIPPED"], SHIPPED: [], CANCELLED: [] };
   if (!allowed[order.status]?.includes(status)) throw new AppError(409, `Cannot change order from ${order.status} to ${status}`, "INVALID_ORDER_TRANSITION");

@@ -23,7 +23,7 @@ catalogRouter.get("/", asyncHandler(async (req, res) => {
 }));
 
 catalogRouter.get("/:slug", asyncHandler(async (req, res) => {
-  const product = await prisma.product.findFirst({ where: { slug: req.params.slug, active: true }, select: { id: true, name: true, slug: true, description: true, category: true, imageUrl: true, priceCents: true, stock: true } });
+  const product = await prisma.product.findFirst({ where: { slug: String(req.params.slug), active: true }, select: { id: true, name: true, slug: true, description: true, category: true, imageUrl: true, priceCents: true, stock: true } });
   if (!product) throw new AppError(404, "Product not found", "PRODUCT_NOT_FOUND");
   res.json({ data: product });
 }));
