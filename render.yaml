@@ -1,0 +1,13 @@
+# One-click demo deployment: Render builds deploy/Dockerfile from this repo.
+services:
+  - type: web
+    name: nexora-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./deploy/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true
