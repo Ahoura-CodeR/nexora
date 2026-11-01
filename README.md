@@ -4,6 +4,8 @@
 
 A commerce storefront and operations dashboard built to explore the parts of a small commerce system that get interesting beyond product cards: inventory consistency, order creation, sessions, role checks, and API boundaries.
 
+**Live demo:** https://nexora-demo-zz01.onrender.com — browse the catalog and the cart, or sign in as `admin@nexora.local` / `ChangeMe123!` for the admin views. The free instance sleeps when idle, so the first request after a pause can take a minute or two to wake up.
+
 ![The storefront](docs/storefront.jpg)
 
 ## What's in here
