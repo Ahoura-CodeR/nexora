@@ -1,5 +1,7 @@
 # NEXORA Commerce
 
+[![CI](https://github.com/Ahoura-CodeR/nexora/actions/workflows/ci.yml/badge.svg)](https://github.com/Ahoura-CodeR/nexora/actions/workflows/ci.yml)
+
 A commerce storefront and operations dashboard built to explore the parts of a small commerce system that get interesting beyond product cards: inventory consistency, order creation, sessions, role checks, and API boundaries.
 
 ![The storefront](docs/storefront.jpg)
