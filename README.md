@@ -2,6 +2,8 @@
 
 A commerce storefront and operations dashboard built to explore the parts of a small commerce system that get interesting beyond product cards: inventory consistency, order creation, sessions, role checks, and API boundaries.
 
+![The storefront](docs/storefront.jpg)
+
 ## What's in here
 
 - Responsive storefront with search, category filters, product detail pages, and a persistent cart
