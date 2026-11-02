@@ -6,7 +6,7 @@ services:
     plan: free
     dockerfilePath: ./deploy/Dockerfile
     dockerContext: .
-    healthCheckPath: /
+    healthCheckPath: /_boot
     autoDeploy: true
     envVars:
       - key: SESSION_SECRET

@@ -14,6 +14,9 @@ wait_for() {
 
 export PGDATA=/tmp/pg
 PUBLIC_PORT="${PORT:-7860}"
+rm -f /tmp/ready
+# Open the public port immediately; the proxy serves a "starting" page until /tmp/ready exists.
+PORT="$PUBLIC_PORT" node /proxy.js &
 export NODE_ENV=production API_PORT=4000
 export NODE_OPTIONS="--max-old-space-size=180"
 export DATABASE_URL="postgresql://flowforge@127.0.0.1:5433/nexora?schema=public"
@@ -53,6 +56,7 @@ cd /app/apps/api
 node dist/src/server.js > /tmp/api.log 2>&1 &
 wait_for http://127.0.0.1:4000/api/health "api" /tmp/api.log
 
+touch /tmp/ready
 echo "[boot] ready on port $PUBLIC_PORT"
 ( free -m 2>/dev/null || true; ps -o pid,rss,comm -C node 2>/dev/null || true ) | sed 's/^/[mem] /'
-exec env PORT="$PUBLIC_PORT" node /proxy.js
+wait
